@@ -19,7 +19,7 @@ HOW TO RUN (local Windows example)
 
         pip install -r requirements.txt
 
-4.  Clone IllusionDiffusion to:  C:\ai\squintypics
+4.  Clone IllusionDiffusion to:  C:\\ai\\squintypics
     (Or change `MODEL_PATH` below.)
 
 5.  Put a starter image (PNG/JPG) inside an `input_images` folder

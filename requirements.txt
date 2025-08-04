@@ -9,7 +9,7 @@ torch>=2.7.0
 diffusers>=0.34.0
 transformers>=4.54.0
 accelerate>=1.9.0
-xformers
+# xformers  # Only needed for GPU systems - causes DLL issues on CPU-only
 safetensors>=0.5.3
 
 # UI framework
