@@ -1,9 +1,15 @@
 # SquintyPics Requirements
-# Core ML packages
+# For GPU systems with CUDA:
+# pip install torch --extra-index-url https://download.pytorch.org/whl/cu118
+# For CPU-only systems (slower but works):
+# pip install torch
+
+# Core ML packages (IllusionDiffusion dependencies)
 torch>=2.7.0
 diffusers>=0.34.0
 transformers>=4.54.0
 accelerate>=1.9.0
+xformers
 safetensors>=0.5.3
 
 # UI framework
@@ -11,6 +17,7 @@ streamlit>=1.47.0
 
 # Image processing
 Pillow>=11.3.0
+qrcode
 
 # Scientific computing
 scipy>=1.16.0

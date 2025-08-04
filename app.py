@@ -75,18 +75,24 @@ try:
 
     if "main_pipe" not in st.session_state or "image_pipe" not in st.session_state:
         with st.spinner("Loading IllusionDiffusion models…"):
-            # Initialize components
-            vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse", torch_dtype=torch.float16)
-            controlnet = ControlNetModel.from_pretrained("monster-labs/control_v1p_sd15_qrcode_monster", torch_dtype=torch.float16)
-
+            # Detect device and optimize accordingly
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            dtype = torch.float16 if device == "cuda" else torch.float32  # CPU works better with float32
+            
+            st.info(f"🖥️ Using device: {device.upper()} ({'GPU accelerated' if device == 'cuda' else 'CPU only - slower but works'})")
+            
+            # Initialize components with appropriate dtype
+            vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse", torch_dtype=dtype)
+            controlnet = ControlNetModel.from_pretrained("monster-labs/control_v1p_sd15_qrcode_monster", torch_dtype=dtype)
+            
             # Initialize the main pipeline
             st.session_state.main_pipe = StableDiffusionControlNetPipeline.from_pretrained(
                 BASE_MODEL,
                 controlnet=controlnet,
                 vae=vae,
                 safety_checker=None,
-                torch_dtype=torch.float16,
-            ).to("cuda" if torch.cuda.is_available() else "cpu")
+                torch_dtype=dtype,
+            ).to(device)
 
             # Initialize image-to-image pipeline
             st.session_state.image_pipe = StableDiffusionControlNetImg2ImgPipeline(**st.session_state.main_pipe.components)
@@ -199,7 +205,8 @@ def remix(base_img: Image.Image, prompt: str, steps: int = 25) -> Image.Image:
     
     # Generate seed
     my_seed = random.randint(0, 2**32 - 1)
-    generator = torch.Generator(device="cuda" if torch.cuda.is_available() else "cpu").manual_seed(my_seed)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    generator = torch.Generator(device=device).manual_seed(my_seed)
     
     # First pass - generate latents
     out = main_pipe(
